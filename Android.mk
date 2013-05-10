@@ -25,6 +25,8 @@ LOCAL_STATIC_JAVA_LIBRARIES += android-common
 
 LOCAL_PACKAGE_NAME := OneTimeInitializer
 
+LOCAL_PRIVILEGED_MODULE := true
+
 LOCAL_PROGUARD_FLAG_FILES := proguard.flags
 
 include $(BUILD_PACKAGE)
