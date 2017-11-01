@@ -16,7 +16,6 @@
 
 package com.android.onetimeinitializer;
 
-import android.app.IntentService;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -37,11 +36,8 @@ import java.util.Set;
  * BOOT_COMPLETED broadcast intent instead.  This means, when the app is upgraded, the
  * initialization code here won't run until the device reboots.
  */
-public class OneTimeInitializerService extends IntentService {
-
-    // class name is too long
-    private static final String TAG = OneTimeInitializerService.class.getSimpleName()
-            .substring(0, 22);
+public class OneTimeInitializer {
+    private static final String TAG = OneTimeInitializer.class.getSimpleName();
 
     // Name of the shared preferences file.
     private static final String SHARED_PREFS_FILE = "oti";
@@ -58,21 +54,16 @@ public class OneTimeInitializerService extends IntentService {
     private static final String LAUNCHER_INTENT_COLUMN = "intent";
 
     private SharedPreferences mPreferences;
+    private Context mContext;
 
-    public OneTimeInitializerService() {
-        super("OneTimeInitializer Service");
+    OneTimeInitializer(Context context) {
+        mContext = context;
+        mPreferences = mContext.getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE);
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        mPreferences = getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE);
-    }
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
+    void initialize() {
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.v(TAG, "OneTimeInitializerService.onHandleIntent");
+            Log.v(TAG, "OneTimeInitializer.initialize");
         }
 
         final int currentVersion = getMappingVersion();
@@ -100,7 +91,7 @@ public class OneTimeInitializerService extends IntentService {
     }
 
     private void updateDialtactsLauncher() {
-        ContentResolver cr = getContentResolver();
+        ContentResolver cr = mContext.getContentResolver();
         Cursor c = cr.query(LAUNCHER_CONTENT_URI,
                 new String[]{LAUNCHER_ID_COLUMN, LAUNCHER_INTENT_COLUMN}, null, null, null);
         if (c == null) {
