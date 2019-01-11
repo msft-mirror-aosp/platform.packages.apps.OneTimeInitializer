@@ -19,6 +19,7 @@ android_app {
     srcs: ["src/**/*.java"],
     static_libs: ["android-common"],
     sdk_version: "current",
+    product_specific: true,
     privileged: true,
     optimize: {
         proguard_flags_files: ["proguard.flags"],
